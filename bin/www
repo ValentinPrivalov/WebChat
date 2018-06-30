@@ -39,6 +39,7 @@ let webSocketServer = new WebSocketServer.Server({port: 8081});
 
 webSocketServer.on('connection', ws => {
     console.log(`-- New connection`);
+    let clientId = null;
 
     ws.on('message', message => {
         console.log(`-- Message: ${message}`);
@@ -46,6 +47,7 @@ webSocketServer.on('connection', ws => {
 
         switch (response.uc) {
             case 'START-CONNECTION':
+                clientId = response.id;
                 clients[response.id] = ws;
                 ws.send(JSON.stringify({uc: response.uc}));
                 break;
@@ -53,8 +55,8 @@ webSocketServer.on('connection', ws => {
     });
 
     ws.on('close', () => {
-        console.log(`-- Connection closed: ${id}`);
-        delete clients[id];
+        console.log(`-- Connection closed: ${clientId}`);
+        delete clients[clientId];
     });
 });
 
